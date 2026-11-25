@@ -277,16 +277,23 @@ every expert on the CPU the answers match an RTX 2070 Super's: on the RX 7900 XT
 64 of 64 steps after a 302-token prompt, and at 15 to 16 of 16 after 2,048 tokens. On RDNA4 the prompt's FP16 products
 go through hipBLASLt, which rounds them differently: after one 2,048-token prompt that is unusually sensitive, the RX
 9070 XT's answers differed from CUDA's more than the RX 7900 XT's, and with `ROCBLAS_USE_HIPBLASLT=0` as much as the
-RX 7900 XT's; after 302 and 8,192 tokens they match CUDA's. Use an NVIDIA card or a Mac for now.
+RX 7900 XT's; after 302 and 8,192 tokens they match CUDA's. It is still marked not ready because of that difference.
 
-Not run yet: an AMD card on native Linux or Windows, `--expert-gpu` on two cards (built but not run), `--layer-split`
-on two unequal cards (below; it has run on two RTX 2070 Super), UD-Q4_K_XL on the 8 GB card and UD-Q4_K_XL on a Mac.
-Pictures go through Unsloth's mmproj-F16.gguf, read on the CPU (`--vision cpu`) or the card; on a Mac, on the CPU. The
-draft file is an option (`--draft-model`). Several requests at once (`"parallel"`, see [BATCHING.md](../BATCHING.md))
-are opt-in on an NVIDIA card (up to 16 slots), not with the draft file, not with `--layer-split` and not on AMD. With
-`--tail-skip` (setup's small-card flags) a chat's answer can then depend on the other chats writing at the same time.
-On a Mac the engine takes one request at a time for this model, and the installer writes `"parallel": 1` there. Its
-license is Apache 2.0.
+**AMD on native Linux, 2026-11-25.** An RX 9070 XT (gfx1201), Ryzen 9 9950X3D and 64 GiB of RAM on Rhino Linux
+2026.1 (kernel 7.4.0-070400rc2-generic), ROCm 7.2.4 in a Docker container with the ROCm devices passed through,
+loaded both IQ4_NL and UD-Q4_K_XL from an engine built from main at `1a41ff6` and answered. On the earlier `6e61054`
+branch on the same card, `poly_inkling_kernels_test` passed with 0 failures and `poly_logits_dump` matched llama.cpp
+29b52d398b's most likely token at 32 of 32 steps; that was a different build and does not settle the hipBLASLt
+difference above.
+
+Not run yet: an AMD card on Windows, `--expert-gpu` on two cards (built but not run), `--layer-split` on two unequal
+cards (below; it has run on two RTX 2070 Super), UD-Q4_K_XL on the 8 GB card and UD-Q4_K_XL on a Mac. Pictures go
+through Unsloth's mmproj-F16.gguf, read on the CPU (`--vision cpu`) or the card; on a Mac, on the CPU. The draft file is
+an option (`--draft-model`). Several requests at once (`"parallel"`, see [BATCHING.md](../BATCHING.md)) are opt-in on
+an NVIDIA card (up to 16 slots), not with the draft file, not with `--layer-split` and not on AMD. With `--tail-skip`
+(setup's small-card flags) a chat's answer can then depend on the other chats writing at the same time. On a Mac the
+engine takes one request at a time for this model, and the installer writes `"parallel": 1` there. Its license is
+Apache 2.0.
 
 ## Install
 
